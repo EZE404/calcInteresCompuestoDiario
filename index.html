@@ -68,23 +68,23 @@
             </div>
             <div class="form-group">
                 <label for="aporteMensual">Aporte Mensual (en ARS)</label>
-                <input type="text" id="aporteMensual" placeholder="Ej: 200.000,00" required>
+                <input type="text" id="aporteMensual" placeholder="Ej: 200.000,00 o 0" required>
             </div>
             <div class="form-group">
-                <label for="tna">Tasa Nominal Anual (en %)</label>
+                <label for="tna">Tasa Nominal Anual (TNA en %)</label>
                 <input type="number" id="tna" placeholder="Ej: 40" required min="0" max="100">
             </div>
             <div class="form-group">
-                <label for="tiempo">Tiempo de Inversión</label>
-                <input type="number" id="tiempo" placeholder="Ej: 1" required min="1">
-            </div>
-            <div class="form-group">
-                <label for="unidadTiempo">Unidad de Tiempo</label>
+                <label for="unidadTiempo">Unidad de Tiempo de Inversión</label>
                 <select id="unidadTiempo" required>
                     <option value="dias">Días</option>
                     <option value="meses">Meses</option>
                     <option value="anios">Años</option>
                 </select>
+            </div>
+                <div class="form-group">
+                <label for="tiempo">Tiempo de Inversión</label>
+                <input type="number" id="tiempo" placeholder="Ej: 1" required min="1">
             </div>
             <button type="submit" class="btn">Calcular</button>
         </form>
