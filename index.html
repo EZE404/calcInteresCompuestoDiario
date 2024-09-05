@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Inversión Compuesta</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 400px;
+        }
+        h2 {
+            text-align: center;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        input {
+            width: 100%;
+            padding: 8px;
+            font-size: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .btn {
+            width: 100%;
+            padding: 10px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .btn:hover {
+            background-color: #218838;
+        }
+        .result {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 1.2rem;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Calculadora de Inversión Compuesta</h2>
+        <form id="investmentForm">
+            <div class="form-group">
+                <label for="inversionInicial">Inversión Inicial (en ARS)</label>
+                <input type="text" id="inversionInicial" placeholder="Ej: 2.000.000,00" required>
+            </div>
+            <div class="form-group">
+                <label for="aporteMensual">Aporte Mensual (en ARS)</label>
+                <input type="text" id="aporteMensual" placeholder="Ej: 200.000,00" required>
+            </div>
+            <div class="form-group">
+                <label for="tna">Tasa Nominal Anual (en %)</label>
+                <input type="number" id="tna" placeholder="Ej: 40" required min="0" max="100">
+            </div>
+            <button type="submit" class="btn">Calcular</button>
+        </form>
+        <div class="result" id="result"></div>
+    </div>
+
+    <script>
+        document.getElementById('investmentForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            // Función para convertir string con formato argentino a número
+            function convertirANumero(valor) {
+                return parseFloat(valor.replace(/\./g, '').replace(',', '.'));
+            }
+
+            // Obtener los valores del formulario
+            let inversionInicial = convertirANumero(document.getElementById('inversionInicial').value);
+            let aporteMensual = convertirANumero(document.getElementById('aporteMensual').value);
+            let tna = parseFloat(document.getElementById('tna').value) / 100;
+
+            // Validaciones básicas
+            if (isNaN(inversionInicial) || isNaN(aporteMensual) || isNaN(tna)) {
+                alert('Por favor, ingrese valores válidos.');
+                return;
+            }
+
+            // Cálculo de tasa efectiva diaria (TED)
+            const diasAno = 365;
+            const TED = Math.pow(1 + tna, 1 / diasAno) - 1;
+
+            // Inicializar el capital acumulado
+            let capitalAcumulado = inversionInicial;
+            const meses = 12;
+            const diasPorMes = Math.floor(diasAno / meses);
+
+            // Simulación de inversión diaria compuesta con aportes mensuales
+            for (let mes = 0; mes < meses; mes++) {
+                for (let dia = 0; dia < diasPorMes; dia++) {
+                    capitalAcumulado += capitalAcumulado * TED;
+                }
+                capitalAcumulado += aporteMensual;
+            }
+
+            // Formatear resultado a formato argentino
+            const formatearARS = (valor) => {
+                return valor.toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            };
+
+            // Mostrar el resultado
+            document.getElementById('result').innerHTML = `Total acumulado en 1 año: ARS ${formatearARS(capitalAcumulado)}`;
+        });
+    </script>
+</body>
+</html>
