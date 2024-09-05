@@ -30,7 +30,7 @@
             display: block;
             margin-bottom: 5px;
         }
-        input {
+        input, select {
             width: 100%;
             padding: 8px;
             font-size: 1rem;
@@ -59,7 +59,8 @@
 </head>
 <body>
     <div class="container">
-        <h2>Calculadora de Inversión Compuesta</h2>
+        <h2>Calculadora de Inversión Compuesta Diaria</h2>
+        <p>¿Tenés tu plata en una billetera virtual que te genera ganancias a diario y querés saber cuánto vas a tener de acá a X tiempo? Esta calculadora te puede ayudar</p>
         <form id="investmentForm">
             <div class="form-group">
                 <label for="inversionInicial">Inversión Inicial (en ARS)</label>
@@ -72,6 +73,18 @@
             <div class="form-group">
                 <label for="tna">Tasa Nominal Anual (en %)</label>
                 <input type="number" id="tna" placeholder="Ej: 40" required min="0" max="100">
+            </div>
+            <div class="form-group">
+                <label for="tiempo">Tiempo de Inversión</label>
+                <input type="number" id="tiempo" placeholder="Ej: 1" required min="1">
+            </div>
+            <div class="form-group">
+                <label for="unidadTiempo">Unidad de Tiempo</label>
+                <select id="unidadTiempo" required>
+                    <option value="dias">Días</option>
+                    <option value="meses">Meses</option>
+                    <option value="anios">Años</option>
+                </select>
             </div>
             <button type="submit" class="btn">Calcular</button>
         </form>
@@ -91,11 +104,23 @@
             let inversionInicial = convertirANumero(document.getElementById('inversionInicial').value);
             let aporteMensual = convertirANumero(document.getElementById('aporteMensual').value);
             let tna = parseFloat(document.getElementById('tna').value) / 100;
+            let tiempo = parseInt(document.getElementById('tiempo').value);
+            let unidadTiempo = document.getElementById('unidadTiempo').value;
 
             // Validaciones básicas
-            if (isNaN(inversionInicial) || isNaN(aporteMensual) || isNaN(tna)) {
+            if (isNaN(inversionInicial) || isNaN(aporteMensual) || isNaN(tna) || isNaN(tiempo)) {
                 alert('Por favor, ingrese valores válidos.');
                 return;
+            }
+
+            // Convertir el tiempo a días dependiendo de la unidad seleccionada
+            let diasTotales;
+            if (unidadTiempo === "dias") {
+                diasTotales = tiempo;
+            } else if (unidadTiempo === "meses") {
+                diasTotales = tiempo * 30; // Aproximadamente 30 días por mes
+            } else if (unidadTiempo === "anios") {
+                diasTotales = tiempo * 365; // 365 días por año
             }
 
             // Cálculo de tasa efectiva diaria (TED)
@@ -104,8 +129,8 @@
 
             // Inicializar el capital acumulado
             let capitalAcumulado = inversionInicial;
-            const meses = 12;
-            const diasPorMes = Math.floor(diasAno / meses);
+            const meses = Math.floor(diasTotales / 30); // Cantidad aproximada de meses
+            const diasPorMes = 30;
 
             // Simulación de inversión diaria compuesta con aportes mensuales
             for (let mes = 0; mes < meses; mes++) {
@@ -115,13 +140,19 @@
                 capitalAcumulado += aporteMensual;
             }
 
+            // Capitalizar los días adicionales si hay más de un múltiplo de 30 días
+            let diasRestantes = diasTotales % 30;
+            for (let dia = 0; dia < diasRestantes; dia++) {
+                capitalAcumulado += capitalAcumulado * TED;
+            }
+
             // Formatear resultado a formato argentino
             const formatearARS = (valor) => {
                 return valor.toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
             };
 
             // Mostrar el resultado
-            document.getElementById('result').innerHTML = `Total acumulado en 1 año: ARS ${formatearARS(capitalAcumulado)}`;
+            document.getElementById('result').innerHTML = `Total acumulado en ${tiempo} ${unidadTiempo}: ARS ${formatearARS(capitalAcumulado)}`;
         });
     </script>
 </body>
